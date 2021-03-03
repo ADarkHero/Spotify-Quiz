@@ -1,0 +1,10 @@
+body{
+  background-size: 0 0;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+.hideMe{
+  display: none;
+}
