@@ -13,39 +13,13 @@ if($type == "playlist"){
     $spotifyURL = 'https://api.spotify.com/v1/playlists/' . $_GET["search"] . '/tracks?offset=0&limit=100&market=DE'; 
 }
 else if($type == "song"){
-    $search = spotifyRegex($_GET["search"]);
-    $spotifyURL = 'https://api.spotify.com/v1/search?q=' . $search . '&type=track&market=DE&limit=1';  
+    $spotifyURL = 'https://api.spotify.com/v1/tracks/' . $_GET["search"];  
 }
 
 $spotifyJson = makeSpotifyCall($spotifyURL, $authorization);
 
 //echo($spotifyURL);
 echo($spotifyJson);
-
-
-
-/*
-*
-*/
-function spotifyRegex($search){
-    //To lower case
-    $searchToLower = strtolower($search);
-
-    //Replace space with ---
-    //This is used to "add spaces" to the regular expression below
-    $searchWOSpaces = str_replace(" ", "---", $searchToLower); 
-
-    //Removes special characters
-    //The spotify api doesn't like special characters
-    //Normally, the search should work without them
-    $searchWOSpecialChars = preg_replace('/[^A-Za-z0-9\-]/', '', $searchWOSpaces); 
-
-    //Replace --- with %20
-    //Spotify wants spaces as %20
-    $searchFinal = str_replace("---", "%20", $searchWOSpecialChars); 
-
-    return $searchFinal;
-}
 
 
 

@@ -30,7 +30,7 @@ function loadGameSet(gameSet){
     $.ajax({url: "spotifyApi.php?type=playlist&search="+gameSet, success: function(result){
         json = jQuery.parseJSON(result);
         json.items.forEach(element => {
-            songs.push(element.track.artists[0].name + " " + element.track.name);
+            songs.push(element.track.id);
         });
 
         //Play first song
@@ -72,36 +72,29 @@ function loadSpotifySong(songId){
     $.ajax({url: "spotifyApi.php?type=song&search="+songId, success: function(result){
         json = jQuery.parseJSON(result);
 
-        //Check, if the track actually exists
-        if(json.tracks.total == 0){
-            console.log(songId);
+        //If it exists, write it to the GUI
+        //Support for multiple artists
+        var artists = json.artists[0].name;
+        for(var i = 1; i < json.artists.length; i++){
+            artists = artists + " | " + json.artists[i].name;
+        }
+
+        $("#spotifyArtistName").html(artists);
+        $("#spotifySongTitle").html(json.name);
+        $("#spotifyAlbumName").html(json.album.name);
+        $("#spotifyAlbumImage").attr("src", json.album.images[0].url);
+        $("#spotifyAlbumImageLink").attr("href", json.album.external_urls.spotify);
+
+        if(json.preview_url == null){
+            //TODO: Somehow fix tracks with no previews, like "JUICE WRLD - Lucid Dreams"
+            //Currently skips unplayable songs
+            console.log(songId + " " + artists + " - " + json.name);
             nextSong();
         }
-        //If it exists, write it to the GUI
         else{
-            //Support for multiple artists
-            var artists = json.tracks.items[0].artists[0].name;
-            for(var i = 1; i < json.tracks.items[0].artists.length; i++){
-                artists = artists + " | " + json.tracks.items[0].artists[i].name;
-            }
-
-            $("#spotifyArtistName").html(artists);
-            $("#spotifySongTitle").html(json.tracks.items[0].name);
-            $("#spotifyAlbumName").html(json.tracks.items[0].album.name);
-            $("#spotifyAlbumImage").attr("src", json.tracks.items[0].album.images[0].url);
-            $("#spotifyAlbumImageLink").attr("href", json.tracks.items[0].album.external_urls.spotify);
-
-            if(json.tracks.items[0].preview_url == null){
-                //TODO: Somehow fix tracks with no previews, like "JUICE WRLD - Lucid Dreams"
-                //Currently skips unplayable songs
-                console.log(songId);
-                nextSong();
-            }
-            else{
-                document.getElementById("spotifyEmbedded").setAttribute('src', json.tracks.items[0].preview_url);
-                document.getElementById('spotifyEmbedded').play();
-            }
-        }  
+            document.getElementById("spotifyEmbedded").setAttribute('src', json.preview_url);
+            document.getElementById('spotifyEmbedded').play();
+        }
     }});     
 }
 
