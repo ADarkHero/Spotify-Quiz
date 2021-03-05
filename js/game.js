@@ -8,7 +8,7 @@ function startNewGame(){
     var gameSet = urlParams.get('set');
 
     //If no set was chosen, pick the default one
-    if(gameSet == null){
+    if(gameSet == null || gameSet == ""){
         gameSet = "3PxuZFikwSYIhX0bDMwWrQ";
     }
     else{
@@ -56,8 +56,6 @@ function nextSong(){
 
         //Remove song from array
         songs.splice(randomSongNumber, 1);
-
-        //$( 'button' ).click ();
     }   
     else{
         alert("All songs were already played. Please reload the page to play again!");
@@ -76,6 +74,7 @@ function loadSpotifySong(songId){
 
         //Check, if the track actually exists
         if(json.tracks.total == 0){
+            console.log(songId);
             nextSong();
         }
         //If it exists, write it to the GUI
@@ -95,6 +94,7 @@ function loadSpotifySong(songId){
             if(json.tracks.items[0].preview_url == null){
                 //TODO: Somehow fix tracks with no previews, like "JUICE WRLD - Lucid Dreams"
                 //Currently skips unplayable songs
+                console.log(songId);
                 nextSong();
             }
             else{

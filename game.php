@@ -82,7 +82,7 @@
         <div class="row">
           <?php
             //How many players?
-            if(isset($_GET["players"])){
+            if(isset($_GET["players"]) && $_GET["players"] != ""){
               $playernumber = $_GET["players"];
             }
             else{
